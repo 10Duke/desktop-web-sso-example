@@ -1,0 +1,20 @@
+﻿<Window x:Class="Tenduke.SsoClient.WPF.LoginFormTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Tenduke.SsoClient.WPF.LoginFormTest"
+        mc:Ignorable="d"
+        Title="Web SSO WPF login form test" Height="350" Width="525">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="155*"/>
+            <ColumnDefinition Width="362*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="buttonTest" Content="Test" HorizontalAlignment="Right" Margin="0,44,10,0" VerticalAlignment="Top" Width="40" Click="buttonTest_Click" Grid.Column="1"/>
+        <TextBox x:Name="textBoxResponse" Margin="10,72,10,10" TextWrapping="Wrap" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto"/>
+        <Label x:Name="labelProviderProtocolAndZone" Content="IdP / Ent service provider" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.024,-0.207"/>
+        <TextBox x:Name="textBoxProviderProtocolAndZone" Height="23" Margin="2,13,10,0" TextWrapping="Wrap" Text="https://iam.10duke.com/" VerticalAlignment="Top" Grid.Column="1"/>
+
+    </Grid>
+</Window>

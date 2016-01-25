@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tenduke.SsoClient", "Tenduke.SsoClient\Tenduke.SsoClient.csproj", "{3CF9E921-5679-4DD6-A002-2FD4DA7F0E09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tenduke.SsoClient.Test", "Tenduke.SsoClient.Test\Tenduke.SsoClient.Test.csproj", "{B4C4DB02-D95A-4468-A58A-D77F9B50B0AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tenduke.SsoClient.WPF.WebBrowserTest", "Tenduke.SsoClient.WPF.WebBrowserTest\Tenduke.SsoClient.WPF.WebBrowserTest.csproj", "{428390AA-D030-4E46-A554-A4440CC81914}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tenduke.SsoClient.WPF.LoginFormTest", "Tenduke.SsoClient.WPF.LoginFormTest\Tenduke.SsoClient.WPF.LoginFormTest.csproj", "{BF69030B-7E4B-402D-96EA-CC6BD822D04C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3CF9E921-5679-4DD6-A002-2FD4DA7F0E09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CF9E921-5679-4DD6-A002-2FD4DA7F0E09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CF9E921-5679-4DD6-A002-2FD4DA7F0E09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CF9E921-5679-4DD6-A002-2FD4DA7F0E09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4C4DB02-D95A-4468-A58A-D77F9B50B0AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4C4DB02-D95A-4468-A58A-D77F9B50B0AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4C4DB02-D95A-4468-A58A-D77F9B50B0AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4C4DB02-D95A-4468-A58A-D77F9B50B0AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{428390AA-D030-4E46-A554-A4440CC81914}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{428390AA-D030-4E46-A554-A4440CC81914}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{428390AA-D030-4E46-A554-A4440CC81914}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{428390AA-D030-4E46-A554-A4440CC81914}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF69030B-7E4B-402D-96EA-CC6BD822D04C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF69030B-7E4B-402D-96EA-CC6BD822D04C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF69030B-7E4B-402D-96EA-CC6BD822D04C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF69030B-7E4B-402D-96EA-CC6BD822D04C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
