@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tenduke.SsoClient.WPF.WebBrowserTest"
+        xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
-        Title="Web browser interaction" Height="412.15" Width="536.449">
+        Title="Web browser interaction" Height="600" Width="800">
     <Grid>
-        <WebBrowser x:Name="webBrowser" Margin="10"/>
-
+        <cefSharp:ChromiumWebBrowser Grid.Row="0" x:Name="webBrowser" Margin="10"/>
     </Grid>
 </Window>

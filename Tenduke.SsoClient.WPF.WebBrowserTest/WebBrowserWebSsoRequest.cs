@@ -6,6 +6,7 @@
 //-----------------------------------------------------------------------
 namespace Tenduke.SsoClient.WPF.WebBrowserTest
 {
+    using CefSharp;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -14,6 +15,7 @@ namespace Tenduke.SsoClient.WPF.WebBrowserTest
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
@@ -70,20 +72,6 @@ namespace Tenduke.SsoClient.WPF.WebBrowserTest
 
         #region methods
 
-        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern bool InternetSetCookie(string lpszUrlName, string lbszCookieName, string lpszCookieData);
-
-        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern bool InternetGetCookieEx(
-                string url,
-                string cookieName,
-                StringBuilder cookieData,
-                ref int size,
-                Int32 dwFlags,
-                IntPtr lpReserved);
-
-        private const Int32 InternetCookieHttponly = 0x2000;
-
         /// <summary>
         /// Called to performed required interaction.
         /// </summary>
@@ -96,32 +84,41 @@ namespace Tenduke.SsoClient.WPF.WebBrowserTest
                 var originalRequest = GetHttpWebRequest();
                 var cookieContainer = originalRequest.CookieContainer;
 
-                var webBrowserWindow = new WebBrowserWindow {Owner = _webBrowserOwner};
+                var webBrowserWindow = new WebBrowserWindow { Owner = _webBrowserOwner };
 
-                webBrowserWindow.webBrowser.Navigate(originalRequest.RequestUri);
-
-                webBrowserWindow.webBrowser.Navigating += (sender, args) =>
+                webBrowserWindow.webBrowser.Address = originalRequest.RequestUri.ToString();
+                var currentAddress = string.IsNullOrEmpty(webBrowserWindow.webBrowser.Address)
+                        ? null
+                        : new Uri(webBrowserWindow.webBrowser.Address);
+                webBrowserWindow.webBrowser.LoadingStateChanged += (sender, args) =>
                 {
-                    if (cookieContainer != null && webBrowserWindow.webBrowser.Source != null)
+                    if (!args.IsLoading)
                     {
-                        var cookiesPath = string.Format("{0}{1}{2}/", webBrowserWindow.webBrowser.Source.Scheme,
-                            Uri.SchemeDelimiter, webBrowserWindow.webBrowser.Source.Authority);
-                        SetCookiesToCookieContainer(new Uri(cookiesPath), cookieContainer);
-                    }
-
-                    if (args.Uri != null && _interactionReadyPattern.Match(args.Uri.ToString()).Success)
-                    {
-
-                        var request = (HttpWebRequest) WebRequest.Create(args.Uri);
-                        request.CookieContainer = cookieContainer;
-                        using (var interactionReadyResponse = (HttpWebResponse) request.GetResponse())
+                        if (cookieContainer != null && currentAddress != null)
                         {
-                            nextResponseCallback(interactionReadyResponse, false);
+                            var cookiesPath = string.Format("{0}{1}{2}/", currentAddress.Scheme,
+                                Uri.SchemeDelimiter, currentAddress.Authority);
+                            SetCookiesToCookieContainer(new Uri(cookiesPath), cookieContainer);
                         }
 
-                        args.Cancel = true;
-                        webBrowserWindow.DialogResult = true;
-                        webBrowserWindow.Close();
+                        var newAddress = string.IsNullOrEmpty(args.Browser.MainFrame.Url)
+                                ? null
+                                : new Uri(args.Browser.MainFrame.Url);
+                        if (newAddress != null && _interactionReadyPattern.Match(newAddress.ToString()).Success)
+                        {
+                            var request = (HttpWebRequest)WebRequest.Create(newAddress);
+                            request.CookieContainer = cookieContainer;
+                            using (var interactionReadyResponse = (HttpWebResponse)request.GetResponse())
+                            {
+                                nextResponseCallback(interactionReadyResponse, false);
+                            }
+
+                            Application.Current.Dispatcher.Invoke(delegate
+                            {
+                                webBrowserWindow.DialogResult = true;
+                                webBrowserWindow.Close();
+                            });
+                        }
                     }
                 };
 
@@ -141,29 +138,22 @@ namespace Tenduke.SsoClient.WPF.WebBrowserTest
         /// </summary>
         /// <param name="uri">The URI.</param>
         /// <param name="cookieContainer"><see cref="CookieContainer"/> in which cookies are set.</param>
-        private static void SetCookiesToCookieContainer(Uri uri, CookieContainer cookieContainer)
+        private async void SetCookiesToCookieContainer(Uri uri, CookieContainer cookieContainer)
         {
-            // Determine the size of the cookie
-            int datasize = 8192 * 16;
-            StringBuilder cookieData = new StringBuilder(datasize);
-            if (!InternetGetCookieEx(uri.ToString(), null, cookieData, ref datasize, InternetCookieHttponly, IntPtr.Zero))
-            {
-                if (datasize < 0)
-                    return;
-                // Allocate stringbuilder large enough to hold the cookie
-                cookieData = new StringBuilder(datasize);
-                if (!InternetGetCookieEx(
-                    uri.ToString(),
-                    null, cookieData,
-                    ref datasize,
-                    InternetCookieHttponly,
-                    IntPtr.Zero))
-                    return;
-            }
+            var cookieManager = Cef.GetGlobalCookieManager();
+            var cookies = await cookieManager.VisitUrlCookiesAsync(uri.ToString(), true);
 
-            if (cookieData.Length > 0)
+            if (cookies.Count > 0)
             {
-                cookieContainer.SetCookies(uri, cookieData.ToString().Replace(';', ','));
+                foreach (var cefCookie in cookies)
+                {
+                    var cookie = new System.Net.Cookie(cefCookie.Name, cefCookie.Value, cefCookie.Path, cefCookie.Domain);
+                    if (cefCookie.Expires != null)
+                        cookie.Expires = cefCookie.Expires.Value;
+                    cookie.HttpOnly = cefCookie.HttpOnly;
+                    cookie.Secure = cefCookie.Secure;
+                    cookieContainer.Add(cookie);
+                }
             }
         }
 
