@@ -23,10 +23,25 @@ namespace Tenduke.SsoClient.WPF.WebBrowserTest
             AppDomain.CurrentDomain.AssemblyResolve += Resolver;
 
             //Any CefSharp references have to be in another method with NonInlining
-            // attribute so the assembly rolver has time to do it's thing.
+            // attribute so the assembly resolver has time to do it's thing.
             InitializeCefSharp();
+
+            Exit += App_Exit;
         }
 
+        /// <summary>
+        /// Handles event that occurs just before the application shuts down.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
+        private void App_Exit(object sender, ExitEventArgs e)
+        {
+            Cef.Shutdown();
+        }
+
+        /// <summary>
+        /// Initializes the CefSharp component, loading embedded browser for correct architecture.
+        /// </summary>
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void InitializeCefSharp()
         {
@@ -39,8 +54,13 @@ namespace Tenduke.SsoClient.WPF.WebBrowserTest
             Cef.Initialize(settings, performDependencyCheck: false, browserProcessHandler: null);
         }
 
-        // Will attempt to load missing assembly from either x86 or x64 subdir
-        // Required by CefSharp to load the unmanaged dependencies when running using AnyCPU
+        /// <summary>
+        /// Will attempt to load missing assembly from either x86 or x64 subdir.
+        /// Required by CefSharp to load the unmanaged dependencies when running using AnyCPU.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
+        /// <returns>Assembly for the correct architecture.</returns>
         private static Assembly Resolver(object sender, ResolveEventArgs args)
         {
             if (args.Name.StartsWith("CefSharp"))
